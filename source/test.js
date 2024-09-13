@@ -685,6 +685,40 @@ kava.suite('extendr', function (suite, test) {
 		const output = extendr.deepDefaults({}, original, input)
 		check({ suite, test, original, input, output, values, references })
 	})
+	suite('merge', function (suite, test) {
+		test('merge should concatenate arrays', function () {
+			const original = { arr: [1, 2], obj: { nested: [3, 4] } };
+			const input = { arr: [3, 4], obj: { nested: [5, 6] } };
+			const expected = { arr: [1, 2, 3, 4], obj: { nested: [3, 4, 5, 6] } };
+			const result = extendr.merge({}, original, input);
+			assertHelpers.deepEqual(result, expected, 'Arrays should be concatenated');
+		});
+	
+		test('merge should work with non-array properties', function () {
+			const original = { str: 'hello', num: 1, obj: { a: 1 } };
+			const input = { str: 'world', num: 2, obj: { b: 2 } };
+			const expected = { str: 'world', num: 2, obj: { a: 1, b: 2 } };
+			const result = extendr.merge({}, original, input);
+			assertHelpers.deepEqual(result, expected, 'Non-array properties should be merged correctly');
+		});
+	
+		test('merge should handle nested objects and arrays', function () {
+			const original = { nested: { arr: [1, 2], obj: { a: 1 } } };
+			const input = { nested: { arr: [3, 4], obj: { b: 2 } } };
+			const expected = { nested: { arr: [1, 2, 3, 4], obj: { a: 1, b: 2 } } };
+			const result = extendr.merge({}, original, input);
+			assertHelpers.deepEqual(result, expected, 'Nested objects and arrays should be merged correctly');
+		});
+	
+		test('merge should not modify the original objects', function () {
+			const original = { arr: [1, 2] };
+			const input = { arr: [3, 4] };
+			const result = extendr.merge({}, original, input);
+			assertHelpers.deepEqual(original, { arr: [1, 2] }, 'Original object should not be modified');
+			assertHelpers.deepEqual(input, { arr: [3, 4] }, 'Input object should not be modified');
+		});
+	});
+	
 
 	suite('deference', function (suite, test) {
 		if (/a/.flags == null) {
@@ -734,3 +768,11 @@ kava.suite('extendr', function (suite, test) {
 		}
 	})
 })
+
+
+
+
+
+
+
+
